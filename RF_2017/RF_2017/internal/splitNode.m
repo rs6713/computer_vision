@@ -2,6 +2,7 @@ function [node,nodeL,nodeR] = splitNode(data,node,param)
 % Split node
 
 visualise = 0;
+splitfunct="randrange";%other split functions
 
 % Initilise child nodes
 iter = param.splitNum;
@@ -22,13 +23,26 @@ idx_best = [];
 for n = 1:iter
     
     % Split function - Modify here and try other types of split function
-    
-    dim = randi(D-1); % Pick one random dimension
-    d_min = single(min(data(:,dim))) + eps; % Find the data range of this dimension
-    d_max = single(max(data(:,dim))) - eps;
-    t = d_min + rand*((d_max-d_min)); % Pick a random value within the range as threshold
-    idx_ = data(:,dim) < t;
-    
+    if splitfunct=="randrange"
+        dim = randi(D-1); % Pick one random dimension
+        d_min = single(min(data(:,dim))) + eps; % Find the data range of this dimension
+        d_max = single(max(data(:,dim))) - eps;
+        t = d_min + rand*((d_max-d_min)); % Pick a random value within the range as threshold
+        idx_ = data(:,dim) < t;
+    end
+    if splitfunct=="twopixel"
+        d1_min = single(min(data(:,1))) + eps; % Find the data range of this dimension
+        d1_max = single(max(data(:,1))) - eps;
+        d2_min = single(min(data(:,2))) + eps; % Find the data range of this dimension
+        d2_max = single(max(data(:,2))) - eps;
+        t = d1_min + rand*((d1_max-d1_min)) - (d2_min + rand*((d2_max-d2_min))); % Pick a random value within the range as threshold
+        idx_ = (data(:,1)-data(:,2)) < t;
+    end
+    if splitfunct=="kmeans"
+        idx = kmeans(data,2);%cluster indes for each pt
+        idx_= find(idx==1); % data(find(idx==1),:);
+    end
+
     ig = getIG(data,idx_); % Calculate information gain
     
     if visualise

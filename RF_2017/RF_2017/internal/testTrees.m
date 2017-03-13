@@ -2,8 +2,8 @@ function label = testTrees(data,tree)
 % Slow version - pass data point one-by-one
 
 cc = [];
-for T = 1:length(tree)
-    for m = 1:size(data,1);
+for T = 1:length(tree)%number of trees
+    for m = 1:size(data,1);%amount of test data
         idx = 1;
         
         while tree(T).node(idx).dim
@@ -20,7 +20,7 @@ for T = 1:length(tree)
         leaf_idx = tree(T).node(idx).leaf_idx;
         
         if ~isempty(tree(T).leaf(leaf_idx))
-            p(m,:,T) = tree(T).leaf(leaf_idx).prob;
+            p(m,:,T) = tree(T).leaf(leaf_idx).prob;%distribution at leaf
             label(m,T) = tree(T).leaf(leaf_idx).label;
             
 %             if isfield(tree(T).leaf(leaf_idx),'cc') % for clustering forest
